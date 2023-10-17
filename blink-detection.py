@@ -13,11 +13,11 @@ B_SIZE = (34, 26)
 margin = 95
 class_labels = ['center','left', 'right'] 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('/blinkit/shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
 
 font_letter = cv2.FONT_HERSHEY_PLAIN
-model = load_model('/blinkit/models/gazev3.1.h5')
-model_b = load_model('/blinkit/models/blinkdetection.h5')
+model = load_model('gazev3.1.h5')
+model_b = load_model('blinkdetection.h5')
 
 
 def detect_gaze(eye_img):
@@ -163,8 +163,9 @@ while cap.isOpened():
         blinks_per_minute = (blink_counter / elapsed_time) * 60
         if blinks_per_minute < 10:
             lowblink += 1
-            title = 'Notification Title'
-            message = 'This is the notification message.'
+            
+            title = 'Blinkit'
+            message = 'You are not blinking frequently enough.'
 
             notification.notify(
                 title=title,
