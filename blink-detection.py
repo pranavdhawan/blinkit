@@ -13,11 +13,11 @@ B_SIZE = (34, 26)
 margin = 95
 class_labels = ['center','left', 'right'] 
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('/Users/pranavdhawan/Projects/blinkit/shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor('/blinkit/shape_predictor_68_face_landmarks.dat')
 
 font_letter = cv2.FONT_HERSHEY_PLAIN
-model = load_model('/Users/pranavdhawan/Projects/blinkit/models/gazev3.1.h5')
-model_b = load_model('/Users/pranavdhawan/Projects/blinkit/models/blinkdetection.h5')
+model = load_model('/blinkit/models/gazev3.1.h5')
+model_b = load_model('/blinkit/models/blinkdetection.h5')
 
 
 def detect_gaze(eye_img):
