@@ -2,11 +2,10 @@ import cv2, dlib
 import numpy as np
 from imutils import face_utils
 from keras.models import load_model
-# import winsound
 import os
 import time
-from plyer import notification
-
+from pync import Notifier
+import threading
 
 IMG_SIZE = (64,56)
 B_SIZE = (34, 26)
@@ -54,7 +53,7 @@ def crop_eye(img, eye_points):
 
     return eye_img, eye_rect
 
-# main
+
 cap = cv2.VideoCapture(0)
 # pattern = []
 # frames = 10
@@ -62,11 +61,21 @@ cap = cv2.VideoCapture(0)
 frames_to_blink = 6
 blinking_frames = 0
 
+timerv = 0
+def increment_timerv():
+    global timerv
+    # TODO: change the timer to 60 seconds. 10 seconds just for testing purposes
+    time.sleep(10)
+    timerv = 1
+
+increment_thread = threading.Thread(target=increment_timerv)
+increment_thread.start()
 
 
-blink_counter = 0  # Initialize the blink counter
-start_time = time.time()  # Initialize the start time
-lowblink = 0  # Initialize variable x
+
+blink_counter = 0 
+start_time = time.time()  
+lowblink = 0  
 
 
 
@@ -159,22 +168,22 @@ while cap.isOpened():
         if status_l < 10 :
             blink_counter += 1
             cv2.putText(output,"---BLINKING----",(250,300), font_letter,2, (153,153,255),2)
+
         elapsed_time = time.time() - start_time
         blinks_per_minute = (blink_counter / elapsed_time) * 60
-        if blinks_per_minute < 10:
+        
+        if blinks_per_minute < 10 and timerv != 0:
             lowblink += 1
             
             title = 'Blinkit'
             message = 'You are not blinking frequently enough.'
+            
+            try:
+                Notifier.notify('Your blink count is too low!', title='Notification', sound='default')
+            except Exception as e:
+                print(f"Notification error: {e}")
 
-            notification.notify(
-                title=title,
-                message=message,
-                app_name='blinkit',  # Replace with your app name
-            )
 
-
-        
         cv2.putText(output, f"Blinks per Minute: {blinks_per_minute:.2f}", (10, output.shape[0] - 10), font_letter, 1, (255, 255, 255), 1)
         cv2.putText(output, f"x: {x}", (10, output.shape[0] - 60), font_letter, 1, (255, 255, 255), 1)
 
@@ -195,4 +204,3 @@ while cap.isOpened():
         break
 cap.release()
 cv2.destroyAllWindows()    
-# print(pattern)
