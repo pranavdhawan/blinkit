@@ -11,6 +11,4 @@ Install the dependencies using  `pip install -r requirements.txt`
 
 Start the Application
 
-`npm init`
-
-`npm run start`
+`./run.sh`
