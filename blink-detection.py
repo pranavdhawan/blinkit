@@ -55,9 +55,6 @@ def crop_eye(img, eye_points):
 
 
 cap = cv2.VideoCapture(0)
-# pattern = []
-# frames = 10
-# pattern_length = 0
 frames_to_blink = 6
 blinking_frames = 0
 
@@ -118,48 +115,36 @@ while cap.isOpened():
             y2 = shapes.part(next_point).y
             cv2.line(img,(x,y),(x2,y2),(153,0,153),2)
         shapes = face_utils.shape_to_np(shapes)
-        #~~~~~~~~~~~~~~~~~56,64 EYE IMAGE~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         eye_img_l, eye_rect_l = crop_eye(gray, eye_points=shapes[36:42])
         eye_img_r, eye_rect_r = crop_eye(gray, eye_points=shapes[42:48])
-        #~~~~~~~~~~~~~~~~FOR THE EYE FINAL_WINDOW~~~~~~~~~~~~~~~~~~~~~~#
         eye_img_l_view = cv2.resize(eye_img_l, dsize=(128,112))
         eye_img_l_view = cv2.cvtColor(eye_img_l_view,cv2.COLOR_BGR2RGB)
         eye_img_r_view = cv2.resize(eye_img_r, dsize=(128,112))
         eye_img_r_view = cv2.cvtColor(eye_img_r_view, cv2.COLOR_BGR2RGB)
-        #~~~~~~~~~~~~~~~~~FOR THE BLINK DETECTION~~~~~~~~~~~~~~~~~~~~~~~
         eye_blink_left = cv2.resize(eye_img_l.copy(), B_SIZE)
         eye_blink_right = cv2.resize(eye_img_r.copy(), B_SIZE)
         eye_blink_left_i = eye_blink_left.reshape((1, B_SIZE[1], B_SIZE[0], 1)).astype(np.float32) / 255.
         eye_blink_right_i = eye_blink_right.reshape((1, B_SIZE[1], B_SIZE[0], 1)).astype(np.float32) / 255.
-        #~~~~~~~~~~~~~~~~FOR THE GAZE DETECTIOM~~~~~~~~~~~~~~~~~~~~~~~~#
         eye_img_l = cv2.resize(eye_img_l, dsize=IMG_SIZE)
         eye_input_g = eye_img_l.copy().reshape((1, IMG_SIZE[1], IMG_SIZE[0], 1)).astype(np.float32) / 255.
-        #~~~~~~~~~~~~~~~~~~PREDICTION PROCESS~~~~~~~~~~~~~~~~~~~~~~~~~~#
         
         status_l = detect_blink(eye_blink_left_i)
         gaze =  detect_gaze(eye_input_g)
         if gaze == class_labels[1]:
             blinking_frames += 1
             if blinking_frames == frames_to_blink:
-                # pattern_length +=1
                 os.system("beep -f 2000 -l 1500")
-                # pattern.append(1)
         elif gaze == class_labels[2]:
             blinking_frames += 1
             if blinking_frames == frames_to_blink:
-                # pattern_length +=1
-                os.system("beep -f 2000 -l 1500")
-                # pattern.append(2)
+
 
         elif status_l < 0.1:
             blinking_frames += 1
-            if blinking_frames == frames_to_blink:
-                # pattern_length +=1
-                # pattern.append(3)
+
                 os.system("beep -f 2000 -l 1500")
         else:
             blinking_frames = 0
-        #~~~~~~~~~~~~~~~~~~~~~~~FINAL_WINDOWS~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
         output = cv2.line(output,(400,200), (400,0),(0,255,0),thickness=2)
         cv2.putText(output,"LEFT EYE GAZE",(10,180), font_letter,1, (255,255,51),1)
         cv2.putText(output,"LEFT EYE OPENING %",(200,180), font_letter,1, (255,255,51),1)
