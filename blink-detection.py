@@ -137,12 +137,12 @@ while cap.isOpened():
         elif gaze == class_labels[2]:
             blinking_frames += 1
             if blinking_frames == frames_to_blink:
-
+                os.system("beep -f 2000 -l 1500")
 
         elif status_l < 0.1:
             blinking_frames += 1
 
-                os.system("beep -f 2000 -l 1500")
+            os.system("beep -f 2000 -l 1500")
         else:
             blinking_frames = 0
         output = cv2.line(output,(400,200), (400,0),(0,255,0),thickness=2)
